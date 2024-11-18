@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lägg till produkt</title>
-    <link rel="stylesheet" href="index.css"> <!-- Använd samma CSS som index.php -->
+    <link rel="stylesheet" href="index.css"> 
 </head>
 <body>
     <div class="product-container" id="add-product">

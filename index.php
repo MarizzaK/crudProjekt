@@ -1,10 +1,4 @@
 <?php
-session_start();
-
-
-if (!isset($_SESSION['favorites'])) {
-    $_SESSION['favorites'] = [];
-}
 
 $products = json_decode(file_get_contents('http://localhost:3000/products'), true);
 
@@ -12,37 +6,6 @@ $products = json_decode(file_get_contents('http://localhost:3000/products'), tru
 if ($products === null || !is_array($products)) {
     $products = [];
     echo "Kunde inte hämta produkter eller produkterna är inte i rätt format.";
-}
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    if (isset($_POST['edit-product'])) {
-        $productId = $_POST['product_id'];
-        $updatedProduct = [
-            'name' => $_POST['name'],
-            'price' => $_POST['price'],
-            'image' => $_POST['image']
-        ];
-
-        $ch = curl_init("http://localhost:3000/products/$productId");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($updatedProduct));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Content-Type: application/json",
-        ]);
-        $response = curl_exec($ch);
-        curl_close($ch);
-
-        if ($response) {
-            echo "<p>Produkten uppdaterades!</p>";
-            header("Location: index.php");
-            exit;
-        } else {
-            echo "<p>Det gick inte att uppdatera produkten.</p>";
-        }
-    }
 }
 ?>
 
@@ -58,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <h1>Utvalda Produkter</h1>
 
-
 <div class="product-container" id="featured-products">
     <?php foreach ($products as $product): ?>
         <div class="product-card">
@@ -69,8 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php else: ?>
                 <p><em>Ingen bild tillgänglig</em></p>
             <?php endif; ?>
-
-          
             <form method="get" action="edit-product.php" class="edit-form">
                 <input type="hidden" name="id" value="<?php echo $product['id']; ?>">
                 <button type="submit">Redigera</button>
@@ -78,8 +38,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endforeach; ?>
 </div>
-
-
 
 <script>
     document.getElementById('add-form').addEventListener('submit', function(event) {
@@ -93,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         fetch('http://localhost:3000/products', {
             method: 'POST',
-            headers: { 'Content-Type: application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newProduct)
         })
         .then(response => response.json())
@@ -104,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .catch(() => alert('Det gick inte att lägga till produkten.'));
     });
 </script>
+
 <div class="action-buttons">
     <a href="add-product.php" class="add-product-button">Lägg till produkt</a>
     <a href="export.php?format=xml" class="export-button">Exportera till XML</a>

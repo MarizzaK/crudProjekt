@@ -2,10 +2,11 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const app = express();
+const port = 3000;
 
 app.use(express.json());
 
-const databasePath = path.join(__dirname, "..", "dbh.json");
+const databasePath = path.join(__dirname, "dbh.json");
 
 function readDatabase() {
   try {
@@ -13,7 +14,7 @@ function readDatabase() {
     return JSON.parse(data);
   } catch (error) {
     console.error("Fel vid läsning av databasen:", error);
-    throw error;
+    return [];
   }
 }
 
@@ -22,9 +23,20 @@ function writeDatabase(data) {
     fs.writeFileSync(databasePath, JSON.stringify(data, null, 2), "utf8");
   } catch (error) {
     console.error("Fel vid skrivning till databasen:", error);
-    throw error;
   }
 }
+
+app.get("/products", (req, res) => {
+  try {
+    const products = readDatabase();
+    res.json(products);
+  } catch (error) {
+    console.error("Fel vid hämtning av produkter:", error);
+    res
+      .status(500)
+      .json({ message: "Ett fel uppstod vid hämtning av produkter." });
+  }
+});
 
 app.get("/products/:id", (req, res) => {
   try {
@@ -35,19 +47,15 @@ app.get("/products/:id", (req, res) => {
     if (product) {
       res.json(product);
     } else {
-      res.status(404).json({ message: "Produkt ej hittad" });
+      res
+        .status(404)
+        .json({ message: `Produkt med ID ${productId} ej hittad` });
     }
   } catch (error) {
-    res.status(500).json({ message: "Ett fel uppstod." });
-  }
-});
-
-app.get("/products", (req, res) => {
-  try {
-    const products = readDatabase();
-    res.json(products);
-  } catch (error) {
-    res.status(500).json({ message: "Ett fel uppstod." });
+    console.error("Fel vid hämtning av produkten:", error);
+    res
+      .status(500)
+      .json({ message: "Ett fel uppstod vid hämtning av produkten." });
   }
 });
 
@@ -55,6 +63,7 @@ app.post("/products", (req, res) => {
   try {
     const products = readDatabase();
     const newProduct = req.body;
+
     newProduct.id =
       products.length > 0 ? Math.max(...products.map((p) => p.id)) + 1 : 1;
 
@@ -63,6 +72,7 @@ app.post("/products", (req, res) => {
 
     res.status(201).json(newProduct);
   } catch (error) {
+    console.error("Kunde inte lägga till produkten:", error);
     res.status(500).json({ message: "Kunde inte lägga till produkten." });
   }
 });
@@ -81,6 +91,7 @@ app.put("/products/:id", (req, res) => {
       res.status(404).json({ message: "Produkt ej hittad" });
     }
   } catch (error) {
+    console.error("Kunde inte uppdatera produkten:", error);
     res.status(500).json({ message: "Kunde inte uppdatera produkten." });
   }
 });
@@ -98,8 +109,11 @@ app.delete("/products/:id", (req, res) => {
       res.status(404).json({ message: "Produkt ej hittad" });
     }
   } catch (error) {
+    console.error("Kunde inte ta bort produkten:", error);
     res.status(500).json({ message: "Kunde inte ta bort produkten." });
   }
 });
 
-module.exports = app;
+app.listen(port, () => {
+  console.log(`Servern körs på http://localhost:${port}`);
+});
