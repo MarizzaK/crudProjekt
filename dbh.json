@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "ful grå 4",
+    "price": "4567",
+    "image": "./assets/greyhat.png"
+  },
+  {
+    "id": 3,
+    "name": "Röd H&M kjol",
+    "price": "399.99",
+    "image": "./assets/redskirt.png"
+  },
+  {
+    "id": 4,
+    "name": "Apple datorskärm",
+    "price": 499.99,
+    "image": "assets/computerscreen.png"
+  },
+  {
+    "name": "mk",
+    "price": "12",
+    "image": "./assets/redskirt.png",
+    "id": 5
+  }
+]
