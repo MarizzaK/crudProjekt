@@ -1,8 +1,8 @@
 [
   {
     "id": 1,
-    "name": "ful grå 4",
-    "price": "45",
+    "name": "ful grå ",
+    "price": "567890",
     "image": "./assets/greyhat.png"
   },
   {
@@ -22,5 +22,11 @@
     "price": "12",
     "image": "./assets/redskirt.png",
     "id": 5
+  },
+  {
+    "name": "hej",
+    "price": "10",
+    "image": "",
+    "id": 6
   }
 ]
